@@ -8,7 +8,7 @@ const {
 } = require('../controllers/productController');
 
 // 🌟 Middleware ကို Import လုပ်ပါ (လမ်းကြောင်းမှန် မမှန် သေချာစစ်ပါ)
-const protect = require('../middleware/auth'); 
+const protect = require('../middleware/protect'); 
 
 // 1. Product စာရင်းများကို ကြည့်ခြင်း (Login မလိုပါ - Public)
 router.get('/', getProducts);
