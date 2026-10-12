@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getUsers, createUser, updateUser, deleteUser } = require('../controllers/userController');
-const protect = require('../middleware/auth');
+const protect = require('../middleware/protect');
 const admin = require('../middleware/admin');
 
 router.use(protect, admin);

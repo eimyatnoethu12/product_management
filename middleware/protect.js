@@ -6,22 +6,24 @@ const protect = async (req, res, next) => {
   
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      // Token ကို ဖြတ်ယူခြင်း
+      // 1. Header ထဲက Token ကို ဖြတ်ယူခြင်း
       token = req.headers.authorization.split(' ')[1];
 
-      // Token မှန်ကန်မှု ရှိ/မရှိ စစ်ဆေးခြင်း
+      // 2. Token မှန်ကန်မှု ရှိ/မရှိ စစ်ဆေးခြင်း
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret123');
 
-      // Database ထဲမှာ ဒီ User အမှန်တကယ် ရှိသေးလား စစ်ဆေးခြင်း
+      // 3. 🌟 အဓိက အချက် - Admin က အကောင့်ဖျက်လိုက်ရင် 
+      // Database ထဲမှာ ဒီ User ID နဲ့ ရှာမတွေ့တော့တာကို ဒီနေရာကနေ စစ်ပါတယ်!
       const user = await User.findById(decoded.id).select('-password');
       
       if (!user) {
         return res.status(401).json({ 
           success: false, 
-          message: 'ဒီအကောင့်ကို Admin မှ ဖျက်လိုက်ပါပြီ သို့မဟုတ် မရှိတော့ပါ!' 
+          message: 'ဒီအကောင့်ကို Admin က ဖျက်လိုက်ပါပြီ သို့မဟုတ် မရှိတော့ပါ!' 
         });
       }
 
+      // 4. User အချက်အလက်များကို Request ထဲသို့ ထည့်ပေးခြင်း
       req.user = user;
       next();
 
