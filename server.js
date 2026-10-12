@@ -28,6 +28,10 @@ app.use('/api/users', require('./routes/userRoutes'));
 // Global Error Handler Middleware
 app.use(errorHandler);
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
