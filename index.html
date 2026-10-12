@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MERN Full CRUD Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans p-6">
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="bg-white p-6 rounded-lg shadow-md flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600">🚀 MERN Full CRUD System</h1>
+            <button id="logout-btn" onclick="logout()" class="hidden bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
+        </div>
+
+        <!-- Auth Section -->
+        <div id="auth-section" class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+            <div class="flex border-b mb-4">
+                <button onclick="switchTab('login')" id="tab-login" class="flex-1 py-2 font-bold text-blue-600 border-b-2 border-blue-600">Login</button>
+                <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-2 font-bold text-gray-400">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="form-login" class="space-y-4">
+                <h2 class="text-xl font-semibold">🔑 Login ဝင်ရန်</h2>
+                <input type="email" id="login-email" placeholder="Email" class="w-full p-2 border rounded" value="admin@gmail.com">
+                <input type="password" id="login-password" placeholder="Password" class="w-full p-2 border rounded" value="123456">
+                <button onclick="login()" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold">Login</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="form-register" class="space-y-4 hidden">
+                <h2 class="text-xl font-semibold">📝 အကောင့်အသစ်ဖွင့်ရန်</h2>
+                <input type="text" id="reg-name" placeholder="Name" class="w-full p-2 border rounded">
+                <input type="email" id="reg-email" placeholder="Email" class="w-full p-2 border rounded">
+                <input type="password" id="reg-password" placeholder="Password" class="w-full p-2 border rounded">
+                <select id="reg-role" class="w-full p-2 border rounded">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button onclick="register()" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700 font-bold">Register</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-xl font-semibold mb-4 text-blue-600">📦 Product Dashboard</h2>
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="p-name" placeholder="Product Name" class="flex-1 p-2 border rounded">
+                    <input type="number" id="p-price" placeholder="Price" class="w-32 p-2 border rounded">
+                    <button onclick="createProduct()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add Product</button>
+                </div>
+                <div id="product-list" class="space-y-2"></div>
+            </div>
+
+            <div id="admin-box" class="bg-white p-6 rounded-lg shadow-md hidden">
+                <h2 class="text-xl font-semibold mb-4 text-purple-600">👑 Admin Dashboard - User Management</h2>
+                <div id="user-list" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:5000/api';
+        let token = localStorage.getItem('token') || '';
+
+        if (token) showDashboard();
+
+        function switchTab(tab) {
+            if (tab === 'login') {
+                document.getElementById('form-login').classList.remove('hidden');
+                document.getElementById('form-register').classList.add('hidden');
+                document.getElementById('tab-login').className = 'flex-1 py-2 font-bold text-blue-600 border-b-2 border-blue-600';
+                document.getElementById('tab-register').className = 'flex-1 py-2 font-bold text-gray-400';
+            } else {
+                document.getElementById('form-login').classList.add('hidden');
+                document.getElementById('form-register').classList.remove('hidden');
+                document.getElementById('tab-register').className = 'flex-1 py-2 font-bold text-blue-600 border-b-2 border-blue-600';
+                document.getElementById('tab-login').className = 'flex-1 py-2 font-bold text-gray-400';
+            }
+        }
+
+        async function register() {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            const role = document.getElementById('reg-role').value;
+
+            try {
+                const res = await fetch(`${API}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('အကောင့်ဖွင့်ခြင်း အောင်မြင်သည်!');
+                    switchTab('login');
+                } else { alert(data.message); }
+            } catch (err) { alert('Server ချိတ်ဆက်၍ မရပါ'); }
+        }
+
+        async function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const res = await fetch(`${API}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    alert('Login အောင်မြင်သည်!');
+                    showDashboard();
+                } else { alert(data.message); }
+            } catch (err) { alert('Server ချိတ်ဆက်၍ မရပါ'); }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            token = '';
+            document.getElementById('auth-section').classList.remove('hidden');
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('logout-btn').classList.add('hidden');
+        }
+
+        async function showDashboard() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.getElementById('logout-btn').classList.remove('hidden');
+            loadProducts();
+            loadUsers();
+        }
+
+        async function loadProducts() {
+            try {
+                const res = await fetch(`${API}/products`);
+                const data = await res.json();
+                const list = document.getElementById('product-list');
+                list.innerHTML = data.data.map(p => `
+                    <div class="flex justify-between items-center p-3 border rounded bg-gray-50">
+                        <span><b>${p.name}</b> - $${p.price}</span>
+                        <button onclick="deleteProduct('${p._id}')" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+                    </div>
+                `).join('');
+            } catch (err) { console.error(err); }
+        }
+
+        async function createProduct() {
+            const name = document.getElementById('p-name').value;
+            const price = document.getElementById('p-price').value;
+            await fetch(`${API}/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ name, price })
+            });
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-price').value = '';
+            loadProducts();
+        }
+
+        async function deleteProduct(id) {
+            await fetch(`${API}/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+            loadProducts();
+        }
+
+        async function loadUsers() {
+            try {
+                const res = await fetch(`${API}/users`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('admin-box').classList.remove('hidden');
+                    const list = document.getElementById('user-list');
+                    list.innerHTML = data.data.map(u => `
+                        <div class="flex justify-between items-center p-3 border rounded bg-purple-50">
+                            <span><b>${u.name}</b> (${u.email}) - Role: <span class="text-blue-600 font-bold">${u.role}</span></span>
+                            <button onclick="deleteUser('${u._id}')" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete User</button>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {}
+        }
+
+        async function deleteUser(id) {
+            await fetch(`${API}/users/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+            loadUsers();
+        }
+    </script>
+</body>
+</html>
