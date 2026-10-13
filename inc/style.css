@@ -28,7 +28,6 @@ body {
     align-items: flex-start;
 }
 
-/* Main Layout container matching your max-w-4xl & space-y-6 */
 .max-w-4xl {
     width: 100%;
     max-width: 56rem;
@@ -52,7 +51,6 @@ body {
     margin-bottom: 1.25rem;
 }
 
-/* Flex Utilities */
 .flex {
     display: flex;
 }
@@ -79,17 +77,11 @@ body {
     margin-right: auto;
 }
 
-/* Cards */
 .bg-white {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    transition: box-shadow 0.2s ease;
-}
-
-.bg-white:hover {
-    box-shadow: var(--shadow-lg);
 }
 
 .p-6 {
@@ -124,11 +116,9 @@ body {
     padding-bottom: 0.35rem;
 }
 
-/* Typography & Headings */
 .text-2xl {
     font-size: 1.5rem;
     font-weight: 700;
-    letter-spacing: -0.025em;
 }
 
 .text-xl {
@@ -160,14 +150,12 @@ body {
     color: var(--text-muted);
 }
 
-/* Form Elements */
 input, select {
     width: 100%;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     background-color: #f8fafc;
     color: var(--text-main);
-    transition: all 0.2s ease;
 }
 
 input:focus, select:focus {
@@ -185,7 +173,6 @@ input:focus, select:focus {
     width: 9rem;
 }
 
-/* Borders & Rounded Helpers */
 .border {
     border: 1px solid var(--border-color);
 }
@@ -214,7 +201,6 @@ input:focus, select:focus {
     box-shadow: var(--shadow);
 }
 
-/* Background Variations for lists */
 .bg-gray-50 {
     background-color: #f8fafc;
     border-radius: 8px;
@@ -225,7 +211,6 @@ input:focus, select:focus {
     border-radius: 8px;
 }
 
-/* Buttons */
 button {
     cursor: pointer;
     font-weight: 600;
@@ -240,7 +225,6 @@ button {
 }
 .bg-blue-600:hover {
     background-color: var(--primary-hover);
-    transform: translateY(-1px);
 }
 
 .bg-green-600 {
@@ -249,7 +233,22 @@ button {
 }
 .bg-green-600:hover {
     background-color: #059669;
-    transform: translateY(-1px);
+}
+
+.bg-yellow-500 {
+    background-color: #f59e0b;
+    color: white;
+}
+.bg-yellow-500:hover {
+    background-color: #d97706;
+}
+
+.bg-gray-500 {
+    background-color: #64748b;
+    color: white;
+}
+.bg-gray-500:hover {
+    background-color: #475569;
 }
 
 .bg-red-500 {
@@ -261,11 +260,6 @@ button {
     color: white;
 }
 
-/* Utility */
 .hidden {
     display: none !important;
-}
-
-.gap-3{
-    gap:3px;
 }
