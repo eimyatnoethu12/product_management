@@ -13,7 +13,9 @@ const productCreateLimiter = rateLimit({
     windowMs: 1000, 
     max: 1, 
     message: { error: 'Too many products created from this account, please try again later.' },
-    keyGenerator: (req) => req.user.id, // protect middleware က ထည့်ပေးလိုက်တဲ့ user ID ကို ယူသုံးခြင်း
+    keyGenerator: (req) => {
+    return req.user ? req.user.id : req.ip;
+} // protect middleware က ထည့်ပေးလိုက်တဲ့ user ID ကို ယူသုံးခြင်း
 });
 
 // 🌟 Middleware 
