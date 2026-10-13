@@ -3,60 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MERN Full CRUD Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Product Management Dashboard</title>
+    <link rel="stylesheet" href="inc/style.css">
 </head>
-<body class="bg-gray-100 font-sans p-6">
+<body>
     <div class="max-w-4xl mx-auto space-y-6">
-        
         <!-- Header -->
-        <div class="bg-white p-6 rounded-lg shadow-md flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-blue-600">🚀 MERN Full CRUD System</h1>
-            <button id="logout-btn" onclick="logout()" class="hidden bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
+        <div class="bg-white p-6 shadow-md flex justify-between items-center">
+            <h1 class="text-2xl text-blue-600 product-head">⚡ Product Management System</h1>
+            <button id="logout-btn" onclick="logout()" class="hidden bg-red-500 px-4 py-2">Logout</button>
         </div>
 
         <!-- Auth Section -->
-        <div id="auth-section" class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
-            <div class="flex border-b mb-4">
+        <div id="auth-section" class="bg-white p-6 shadow-md max-w-md mx-auto">
+            <div class="flex border-b mb-4 gap-3">
                 <button onclick="switchTab('login')" id="tab-login" class="flex-1 py-2 font-bold text-blue-600 border-b-2 border-blue-600">Login</button>
                 <button onclick="switchTab('register')" id="tab-register" class="flex-1 py-2 font-bold text-gray-400">Register</button>
             </div>
 
             <!-- Login Form -->
             <div id="form-login" class="space-y-4">
-                <h2 class="text-xl font-semibold">🔑 Login ဝင်ရန်</h2>
-                <input type="email" id="login-email" placeholder="Email" class="w-full p-2 border rounded" value="admin@gmail.com">
-                <input type="password" id="login-password" placeholder="Password" class="w-full p-2 border rounded" value="123456">
-                <button onclick="login()" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold">Login</button>
+                <input type="email" id="login-email" placeholder="Email Address" class="p-2 border" value="admin@gmail.com">
+                <input type="password" id="login-password" placeholder="Password" class="p-2 border" value="123456">
+                <button onclick="login()" class="w-full bg-blue-600 p-2">Sign In</button>
             </div>
 
             <!-- Register Form -->
             <div id="form-register" class="space-y-4 hidden">
-                <h2 class="text-xl font-semibold">📝 အကောင့်အသစ်ဖွင့်ရန်</h2>
-                <input type="text" id="reg-name" placeholder="Name" class="w-full p-2 border rounded">
-                <input type="email" id="reg-email" placeholder="Email" class="w-full p-2 border rounded">
-                <input type="password" id="reg-password" placeholder="Password" class="w-full p-2 border rounded">
-                <select id="reg-role" class="w-full p-2 border rounded">
+                <h2 class="text-xl font-semibold">Create an account</h2>
+                <input type="text" id="reg-name" placeholder="Full Name" class="p-2 border">
+                <input type="email" id="reg-email" placeholder="Email Address" class="p-2 border">
+                <input type="password" id="reg-password" placeholder="Password" class="p-2 border">
+                <select id="reg-role" class="p-2 border">
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
                 </select>
-                <button onclick="register()" class="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700 font-bold">Register</button>
+                <button onclick="register()" class="w-full bg-green-600 p-2">Register</button>
             </div>
         </div>
 
         <!-- Dashboard Section -->
         <div id="dashboard-section" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-lg shadow-md">
+            <div class="bg-white p-6 shadow-md">
                 <h2 class="text-xl font-semibold mb-4 text-blue-600">📦 Product Dashboard</h2>
-                <div class="flex gap-2 mb-4">
-                    <input type="text" id="p-name" placeholder="Product Name" class="flex-1 p-2 border rounded">
-                    <input type="number" id="p-price" placeholder="Price" class="w-32 p-2 border rounded">
-                    <button onclick="createProduct()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add Product</button>
+                <div class="flex gap-2 mb-4 product-dash">
+                    <input type="text" id="p-name" placeholder="Product Name" class="flex-1 p-2 border">
+                    <input type="number" id="p-price" placeholder="Price ($)" class="w-32 p-2 border">
+                    <button onclick="createProduct()" class="bg-green-600 px-4 py-2">Add Product</button>
                 </div>
                 <div id="product-list" class="space-y-2"></div>
             </div>
 
-            <div id="admin-box" class="bg-white p-6 rounded-lg shadow-md hidden">
+            <!-- Admin Dashboard -->
+            <div id="admin-box" class="bg-white p-6 shadow-md hidden">
                 <h2 class="text-xl font-semibold mb-4 text-purple-600">👑 Admin Dashboard - User Management</h2>
                 <div id="user-list" class="space-y-2"></div>
             </div>
@@ -129,6 +128,7 @@
             document.getElementById('auth-section').classList.remove('hidden');
             document.getElementById('dashboard-section').classList.add('hidden');
             document.getElementById('logout-btn').classList.add('hidden');
+            document.getElementById('admin-box').classList.add('hidden');
         }
 
         async function showDashboard() {
@@ -145,9 +145,9 @@
                 const data = await res.json();
                 const list = document.getElementById('product-list');
                 list.innerHTML = data.data.map(p => `
-                    <div class="flex justify-between items-center p-3 border rounded bg-gray-50">
-                        <span><b>${p.name}</b> - $${p.price}</span>
-                        <button onclick="deleteProduct('${p._id}')" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+                    <div class="flex justify-between items-center p-3 border bg-gray-50">
+                        <span><b>${p.name}</b> — <span class="text-blue-600 font-semibold">$${p.price}</span></span>
+                        <button onclick="deleteProduct('${p._id}')" class="bg-red-500 px-3 py-1 text-sm">Delete</button>
                     </div>
                 `).join('');
             } catch (err) { console.error(err); }
@@ -179,9 +179,9 @@
                     document.getElementById('admin-box').classList.remove('hidden');
                     const list = document.getElementById('user-list');
                     list.innerHTML = data.data.map(u => `
-                        <div class="flex justify-between items-center p-3 border rounded bg-purple-50">
-                            <span><b>${u.name}</b> (${u.email}) - Role: <span class="text-blue-600 font-bold">${u.role}</span></span>
-                            <button onclick="deleteUser('${u._id}')" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600">Delete User</button>
+                        <div class="flex justify-between items-center p-3 border bg-purple-50">
+                            <span><b>${u.name}</b> (${u.email}) — Role: <span class="text-blue-600 font-bold">${u.role}</span></span>
+                            <button onclick="deleteUser('${u._id}')" class="bg-red-500 px-3 py-1 text-sm">Delete User</button>
                         </div>
                     `).join('');
                 }

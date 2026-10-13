@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel'); // သင့်ရဲ့ User Model ဖိုင်လမ်းကြောင်းအတိုင်း စစ်ပါ
+const User = require('../models/User'); // သင့်ရဲ့ User Model ဖိုင်လမ်းကြောင်းအတိုင်း စစ်ပါ
 
 const protect = async (req, res, next) => {
   let token;
