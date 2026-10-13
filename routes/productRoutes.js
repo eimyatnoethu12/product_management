@@ -10,8 +10,8 @@ const rateLimit = require('express-rate-limit');
 
 // 1. Rate Limiter ကို သတ်မှတ်ပါ
 const productCreateLimiter = rateLimit({
-    windowMs: 60 * 1000, // ၁ မိနစ်အတွင်း
-    max: 10, // Product ၅ ခုသာ တင်ခွင့်ပြုမည်
+    windowMs: 1000, // ၁ မိနစ်အတွင်း
+    max: 1, // Product ၅ ခုသာ တင်ခွင့်ပြုမည်
     message: { error: 'Too many products created from this account, please try again later.' },
     keyGenerator: (req) => req.user.id, // protect middleware က ထည့်ပေးလိုက်တဲ့ user ID ကို ယူသုံးခြင်း
 });
