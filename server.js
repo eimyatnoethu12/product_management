@@ -2,6 +2,7 @@ const dns = require('dns');
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
@@ -9,6 +10,14 @@ const path = require('path');
 const errorHandler = require('./middleware/errorMiddleware');
 
 const app = express();
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // ၁၅ မိနစ်အတွင်း
+    max: 100, // IP တစ်ခုတည်းက Request အကြိမ် ၁၀၀ ထက်ပိုမခေါ်ရ
+    message: { error: 'Too many requests from this IP, please try again after 15 minutes' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 // Middlewares
 app.use(cors());
@@ -24,7 +33,7 @@ app.use(express.static(path.join(__dirname)));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
-
+app.use('/api/', limiter);
 // Global Error Handler Middleware
 app.use(errorHandler);
 
