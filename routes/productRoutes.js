@@ -18,12 +18,14 @@ const productCreateLimiter = rateLimit({
 
 // 🌟 Middleware 
 const protect = require('../middleware/protect'); 
+const { validateCreateProduct } = require('../middleware/productValidation');
 
 // 1. Product စာရင်းများကို ကြည့်ခြင်း (Login မလိုပါ - Public)
 router.get('/', getProducts);
 
 // 2. Product အသစ်ထည့်ခြင်း (Login ဝင်ထားမှ / Token လိုအပ်သည်)
-router.post('/', protect, productCreateLimiter, createProduct);
+// router.post('/', protect, productCreateLimiter, createProduct);
+router.route('/').post(protect, productCreateLimiter, validateCreateProduct, createProduct);
 
 // 3. Product ပြင်ခြင်း (Login ဝင်ထားမှ / Token လိုအပ်သည်)
 router.put('/:id', protect, updateProduct);
