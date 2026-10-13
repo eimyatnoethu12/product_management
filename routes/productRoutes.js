@@ -20,7 +20,7 @@ const productCreateLimiter = rateLimit({
 const protect = require('../middleware/protect'); 
 
 // 1. Product စာရင်းများကို ကြည့်ခြင်း (Login မလိုပါ - Public)
-router.get('/', protect, getProducts);
+router.get('/', getProducts);
 
 // 2. Product အသစ်ထည့်ခြင်း (Login ဝင်ထားမှ / Token လိုအပ်သည်)
 router.post('/', protect, productCreateLimiter, createProduct);

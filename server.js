@@ -13,7 +13,7 @@ const app = express();
 
 const limiter = rateLimit({
     windowMs: 1000, // ၁ မိနစ်အတွင်း
-    max: 1, // User တစ်ဦးလျှင် Product ၅ ခုသာ အသစ်တင်ခွင့်ပြုမည်// IP တစ်ခုတည်းက Request အကြိမ် ၁၀၀ ထက်ပိုမခေါ်ရ
+    max: 4, // User တစ်ဦးလျှင် Product ၅ ခုသာ အသစ်တင်ခွင့်ပြုမည်// IP တစ်ခုတည်းက Request အကြိမ် ၁၀၀ ထက်ပိုမခေါ်ရ
     message: { error: 'Too many requests from this IP, please try again after 15 minutes' },
     // IP အစား User ရဲ့ ID ကို ယူပြီး ကန့်သတ်ရန် (req.user သည် authenticate လုပ်ပြီးသား middleware မှ ရလာမည်)
     keyGenerator: (req, res) => {
