@@ -10,22 +10,23 @@ const path = require('path');
 const errorHandler = require('./middleware/errorMiddleware');
 
 const app = express();
-
+// IPv6 နှင့် Proxy လုံခြုံရေး သတိပေးချက်ကို ဖြေရှင်းရန် ဤလိုင်းကို ထည့်ပါ
+app.set('trust proxy', 1);
 // Middlewares (Route တွေ မတိုင်ခင် အရင်ခံပေးရပါမယ်)
 app.use(cors());
 app.use(express.json());
 
 // 🛡 Rate Limiter (Route တွေရဲ့ အပေါ်မှာ ထားပါ)
 const limiter = rateLimit({
-    windowMs: 1000, // ၁ စက္ကန့်
-    max: 4, // တစ်စက္ကန့်လျှင် ၄ ကြိမ်သာ ခွင့်ပြုမည်
-    message: { error: 'Too many requests, please try again later.' },
-    keyGenerator: (req, res) => {
-        // User Login ဝင်ထားရင် User ID သုံးမယ်၊ မဝင်ရသေးရင် IP ကို သုံးမယ် (Server Crash တာ ကာကွယ်ရန်)
-        return req.user ? req.user.id : req.ip;
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
+  windowMs: 1000, // ၁ စက္ကန့်
+  max: 4, // တစ်စက္ကန့်လျှင် ၄ ကြိမ်သာ ခွင့်ပြုမည်
+  message: { error: 'Too many requests, please try again later.' },
+  keyGenerator: (req, res) => {
+    // User Login ဝင်ထားရင် User ID သုံးမယ်၊ မဝင်ရသေးရင် IP ကို သုံးမယ် (Server Crash တာ ကာကွယ်ရန်)
+    return req.user ? req.user.id : req.ip;
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // /api/ request အားလုံးကို Limiter နဲ့ စစ်မယ်
